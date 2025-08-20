@@ -108,12 +108,14 @@ public class ApplicationClient {
             } else if (option == 3) {
 
             } else if (option == 4) {
-                System.out.println("Exiting...");
+                System.out.println("Exiting... Re run to start again");
+                break;
             } else {
                 System.out.println("Invalid option");
             }
         }
 
+        scanner.close();
 
     }
 }
