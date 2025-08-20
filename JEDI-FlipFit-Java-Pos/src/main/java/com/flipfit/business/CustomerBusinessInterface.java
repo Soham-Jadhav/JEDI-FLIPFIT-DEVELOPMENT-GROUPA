@@ -20,4 +20,6 @@ public interface CustomerBusinessInterface {
     List<Booking> getBookings(String email);
 
     boolean cancelBooking(String bookingId, String email);
+
+    void showMenu();
 }

@@ -50,4 +50,35 @@ public class CustomerBusiness implements CustomerBusinessInterface {
         return true;
     }
 
+    public void showMenu(){
+        Scanner input = new Scanner(System.in);
+        System.out.println("Customer Menu Options!");
+        System.out.println("1. View Booked Slots");
+        System.out.println("2. Add Slot to Gym Center");
+        System.out.println("3. View Gym Center");
+        System.out.println("4. View Booked Slots");
+        System.out.println("5. Cancel Booking");
+        System.out.println("Select View Options from above");
+        int option = input.nextInt();
+        switch(option){
+            case 1:
+                getSlotInGym("1");
+                break;
+            case 2:
+                Date dummyDate = new Date(1704067200000L);
+                bookSlot("1","1","test@gmail.com",dummyDate);
+               break;
+            case 3:
+                getGymInCity("Banglore");
+                break;
+            case 4:
+                getBookings("test@gmail.com");
+                break;
+            case 5:
+                cancelBooking("1","test@gmail.com");
+                break;
+        }
+
+    }
+
 }
