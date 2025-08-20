@@ -6,8 +6,8 @@ package com.flipfit.bean;
 public class User {
     private String email;
     private String password;
-    private Integer roleId;
-    public User(String email, String password, Integer roleId) {
+    private String roleId;
+    public User(String email, String password, String roleId) {
         this.email = email;
         this.password = password;
         this.roleId = roleId;
@@ -32,11 +32,11 @@ public class User {
         this.password = password;
     }
 
-    public Integer getRoleId() {
+    public String getRoleId() {
         return roleId;
     }
 
-    public void setRoleId(Integer roleId) {
+    public void setRoleId(String roleId) {
         this.roleId = roleId;
     }
 }
