@@ -2,6 +2,7 @@ package com.flipfit.client;
 
 import com.flipfit.bean.Customer;
 import com.flipfit.business.CustomerBusiness;
+import com.flipfit.business.UserBusiness;
 
 import java.util.Scanner;
 
@@ -14,7 +15,23 @@ public class CustomerClient {
      * Handles the customer registration process.
      */
     public void registerCustomer() {
-        System.out.println("Starting customer registration...");
+        System.out.print("Enter email: ");
+        customer.setEmail(sc.next());
+        System.out.print("Enter password: ");
+        customer.setPassword(sc.next());
+        System.out.print("Enter Name: ");
+        customer.setName(sc.next());
+        System.out.print("Enter Phone Number: ");
+        customer.setPhoneNumber(sc.next());
+        System.out.print("Enter Age: ");
+        customer.setAge(Integer.valueOf(sc.next()));
+        System.out.print("Enter Address: ");
+        customer.setAddress(sc.next());
+        customer.setRoleId("Customer");
+        UserBusiness userBusiness = new UserBusiness();
+        userBusiness.registerCustomer(customer);
+
+        System.out.println("Customer registered successfully!");
     }
 
     /**
@@ -61,6 +78,32 @@ public class CustomerClient {
      * @param email The email of the currently logged-in customer.
      */
     public void customerMenu(String email) {
-        System.out.println("Welcome to the customer menu, " + email + "!");
+        int choice = 0;
+
+        while (choice != 5) {
+            System.out.println("Menu:-");
+            System.out.println("1.View Gyms \n2.View Booked Slots \n3.Cancel Booked Slots \n4. Edit Profile \n5.Exit");
+            System.out.print("Enter your choice: ");
+            choice = sc.nextInt();
+
+            switch (choice) {
+                case 1:
+                    viewGyms(email);
+                    break;
+                case 2:
+                    viewBookedSlots(email);
+                    break;
+                case 3:
+                    cancelBooking(email);
+                    break;
+                case 4:
+                    editProfile(email);
+                    break;
+                case 5:
+                    break;
+                default:
+                    System.out.println("Invalid choice!");
+            }
+        }
     }
 }
