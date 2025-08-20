@@ -3,6 +3,7 @@ package com.flipfit.client;
 import com.flipfit.bean.Customer;
 import com.flipfit.bean.User;
 import com.flipfit.business.UserBusiness;
+import com.flipfit.bean.GymOwner;
 
 import java.util.List;
 import java.util.Scanner;
@@ -75,6 +76,30 @@ public class ApplicationClient {
         userBusiness.registerCustomer(customer);
 
     }
+    public void registerAsGymOwner() {
+        System.out.println("Please enter your email");
+        Scanner input = new Scanner(System.in);
+        String email = input.nextLine();
+
+        System.out.println("Please enter your password");
+        String password = input.nextLine();
+
+        System.out.println("Please enter your name");
+        String name = input.nextLine();
+
+        System.out.println("Please enter your phone number");
+        String phoneNumber = input.nextLine();
+
+        System.out.println("Please enter your Aadhar number");
+        String aadharNumber = input.nextLine();
+
+        System.out.println("Please enter your PAN number");
+        String panNumber = input.nextLine();
+
+        GymOwner gymOwner = new GymOwner(email, password, 2, name, phoneNumber, aadharNumber, panNumber);
+
+        userBusiness.registerGymOwner(gymOwner);
+    }
 
     /**
      * Displays the main application menu for user interaction.
@@ -106,7 +131,7 @@ public class ApplicationClient {
             } else if (option == 2) {
                 client.registerAsCustomer();
             } else if (option == 3) {
-
+                client.registerAsGymOwner();
             } else if (option == 4) {
                 System.out.println("Exiting... Re run to start again");
                 break;

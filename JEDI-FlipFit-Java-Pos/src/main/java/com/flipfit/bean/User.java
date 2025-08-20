@@ -1,7 +1,7 @@
 package com.flipfit.bean;
 
-import io.dropwizard.validation.InterpolationHelper;
-import org.apache.commons.lang3.IntegerRange;
+//import io.dropwizard.validation.InterpolationHelper;
+//import org.apache.commons.lang3.IntegerRange;
 
 public class User {
     private String email;

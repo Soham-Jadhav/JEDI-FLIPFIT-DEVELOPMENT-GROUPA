@@ -40,7 +40,11 @@ public class UserBusiness implements UserBusinessInterface {
     }
 
     public boolean registerGymOwner(GymOwner gymOwner) {
-        // Implementation removed
-        return false;
+        User user = new User();
+        user.setEmail(gymOwner.getEmail());
+        user.setPassword(gymOwner.getPassword());
+        user.setRoleId(gymOwner.getRoleId());
+        users.add(user);
+        return true;
     }
 }
