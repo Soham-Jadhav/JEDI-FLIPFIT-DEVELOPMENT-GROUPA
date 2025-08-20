@@ -2,6 +2,7 @@ package com.flipfit.client;
 
 import com.flipfit.bean.Customer;
 import com.flipfit.bean.User;
+import com.flipfit.business.CustomerBusiness;
 import com.flipfit.business.UserBusiness;
 import com.flipfit.bean.GymOwner;
 
@@ -48,6 +49,10 @@ public class ApplicationClient {
         // 3. Provide feedback based on whether a match was found
         if (loginSuccessful) {
             System.out.println("\nLogin successful! Welcome, " + loggedInUser.getEmail() + ".");
+            if(loggedInUser.getRoleId() == 1) {
+                CustomerBusiness customer = new CustomerBusiness();
+                customer.showMenu();
+            }
             // Next, you would likely call a method to show the user's specific dashboard
             // For example: showCustomerDashboard(loggedInUser);
         } else {
