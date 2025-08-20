@@ -10,83 +10,61 @@ import java.util.Scanner;
 public class AdminClient {
 
     AdminBusiness adminBusiness = new AdminBusiness();
+
+
+
     Scanner sc = new Scanner(System.in);
-
-    /**
-     * Prints a list of all gyms to the console.
-     * @param gyms A list of GymCenter objects to be displayed.
-     */
     public void viewAllGyms(List<GymCenter> gyms) {
-        System.out.println("Displaying all gyms...");
-
         for (GymCenter gym : gyms) {
-            System.out.println(gym);
+            System.out.println("+++++++++++++++++++++++++++++++++++++++++++");
+            System.out.println("Gym Id-->" + gym.getGymId());
+            System.out.println("Gym Name-->" + gym.getGymName());
+            System.out.println("Gym Owner Mail-->" + gym.getOwnerEmail());
+            System.out.println("Gym Address-->" + gym.getAddress());
+            System.out.println("Gym Slot Count-->" + gym.getSlotCount());
+            System.out.println("Gym Verification -->" + (gym.isVerified() ? "Yes" : "No"));
+            System.out.println("+++++++++++++++++++++++++++++++++++++++++++");
         }
     }
-
-    /**
-     * Prints a list of all registered gym owners to the console.
-     * @param gymOwners A list of GymOwner objects to be displayed.
-     */
     public void viewAllGymOwners(List<GymOwner> gymOwners) {
-        System.out.println("Displaying all gym owners...");
-
-        for (GymOwner gym : gymOwners) {
-            System.out.println(gym);
+        for (GymOwner gymOwner : gymOwners) {
+            System.out.println("+++++++++++++++++++++++++++++++++++++++++++");
+            System.out.println("Gym Owner Name-->" + gymOwner.getName());
+            System.out.println("Gym Owner phone numver-->" + gymOwner.getPhoneNumber());
+            System.out.println("Gym Owner Aadhar-->" + gymOwner.getAadharNumber());
+            System.out.println("Gym Owner panNumber-->" + gymOwner.getPanNumber());
+            System.out.println("Gym Owner Verification -->" + (gymOwner.isVerified() ? "Yes" : "No"));
+            System.out.println("+++++++++++++++++++++++++++++++++++++++++++");
         }
-    }
 
-    /**
-     * Displays all pending gym owner registration requests.
-     */
+    }
     public void viewAllPendingGymOwnerRequests() {
-        System.out.println("Displaying all pending gym owner requests...");
+        viewAllGymOwners(adminBusiness.viewAllPendingGymOwnerRequests());
     }
-
-    /**
-     * Displays all pending gym registration requests.
-     */
     public void viewAllPendingGymRequests() {
-        System.out.println("Displaying all pending gym requests...");
+        viewAllGyms(adminBusiness.viewAllPendingGymRequests());
     }
 
-    /**
-     * Approves a single pending gym owner registration request.
-     */
     public void approveSingleGymOwnerRequest() {
-        System.out.println("Approving a single gym owner request...");
+        System.out.println("Enter gym owner email: ");
+        adminBusiness.approveSingleGymOwnerRequest(sc.next());
     }
 
-    /**
-     * Approves a single pending gym registration request.
-     */
     public void approveSingleGymRequest() {
-        System.out.println("Approving a single gym request...");
+        System.out.println("Enter gym Id: ");
+        adminBusiness.approveSingleGymRequest(sc.next());
     }
 
-    /**
-     * Approves all pending gym owner registration requests.
-     */
     public void approvePendingGymOwnerRequests() {
-        System.out.println("Approving all pending gym owner requests...");
+        adminBusiness.approveAllPendingGymOwnerRequests();
     }
 
-    /**
-     * Approves all pending gym registration requests.
-     */
     public void approvePendingGymRequests() {
-        System.out.println("Approving all pending gym requests...");
+        adminBusiness.approveAllPendingGymRequests();
     }
-
-    /**
-     * Displays the main administrative menu and handles user input.
-     * @param in A Scanner object to read user input.
-     */
     public void adminMenu(Scanner in){
         System.out.println("++++++++++++++++++++++++++++++++++++++++++++++");
-
         while (true) {
-            System.out.println("Welcome to the Admin menu!");
             System.out.println("1. View All Gym ");
             System.out.println("2. View All Gym Owners");
             System.out.println("3. View all pending Gym Owner Requests");
