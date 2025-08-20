@@ -18,6 +18,10 @@ public class AdminClient {
      */
     public void viewAllGyms(List<GymCenter> gyms) {
         System.out.println("Displaying all gyms...");
+
+        for (GymCenter gym : gyms) {
+            System.out.println(gym);
+        }
     }
 
     /**
@@ -26,6 +30,10 @@ public class AdminClient {
      */
     public void viewAllGymOwners(List<GymOwner> gymOwners) {
         System.out.println("Displaying all gym owners...");
+
+        for (GymOwner gym : gymOwners) {
+            System.out.println(gym);
+        }
     }
 
     /**
@@ -75,6 +83,56 @@ public class AdminClient {
      * @param in A Scanner object to read user input.
      */
     public void adminMenu(Scanner in){
-        System.out.println("Welcome to the Admin menu!");
+        System.out.println("++++++++++++++++++++++++++++++++++++++++++++++");
+
+        while (true) {
+            System.out.println("Welcome to the Admin menu!");
+            System.out.println("1. View All Gym ");
+            System.out.println("2. View All Gym Owners");
+            System.out.println("3. View all pending Gym Owner Requests");
+            System.out.println("4. View all pending Gym Requests");
+            System.out.println("5. Approve all pending Gym Owner Requests");
+            System.out.println("6. Approve all pending Gym Requests");
+            System.out.println("7. Approve Single Gym Owner Request");
+            System.out.println("8. Approve Single Gym Request");
+            System.out.println("9. Exit");
+
+            System.out.print("Enter your choice: ");
+            int choice = in.nextInt();
+            switch (choice) {
+                // Case statements
+                case 1:
+                    List<GymCenter> gymList = adminBusiness.getGym();
+                    viewAllGyms(gymList);
+                    break;
+                case 2:
+                    List<GymOwner> gymOwnerList = adminBusiness.getGymOwners();
+                    viewAllGymOwners(gymOwnerList);
+                    break;
+                case 3:
+                    viewAllPendingGymOwnerRequests();
+                    break;
+                case 4:
+                    viewAllPendingGymRequests();
+                    break;
+                case 5:
+                    approvePendingGymOwnerRequests();
+                    break;
+                case 6:
+                    approvePendingGymRequests();
+                    break;
+                case 7:
+                    approveSingleGymOwnerRequest();
+                    break;
+                case 8:
+                    approveSingleGymRequest();
+                    break;
+                case 9:
+                    return;
+                // Default case statement
+                default:
+                    System.out.println("Wrong choice");
+            }
+        }
     }
 }

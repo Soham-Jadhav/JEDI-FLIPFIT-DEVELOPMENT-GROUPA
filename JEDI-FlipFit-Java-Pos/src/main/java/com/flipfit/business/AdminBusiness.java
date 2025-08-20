@@ -6,7 +6,13 @@ public class AdminBusiness implements AdminBusinessInterface {
 
     public List<GymOwner> getGymOwners() {
         System.out.println("Fetched gym owner details successfully!");
-        return null;
+
+        List<GymOwner> gymOwnerList = new ArrayList<>();
+        gymOwnerList.add(new GymOwner("email1","psd1","1","name1","123","123","123"));
+        gymOwnerList.add(new GymOwner("email2","psd2","2","name2","123","123","123"));
+        gymOwnerList.add(new GymOwner("email3","psd3","3","name3","123","123","123"));
+
+        return gymOwnerList;
     }
     /**
      * Obtains a list of every gym within the system.
@@ -14,7 +20,13 @@ public class AdminBusiness implements AdminBusinessInterface {
      */
     public List<GymCenter> getGym() {
         System.out.println("Fetched gym details successfully!");
-        return null;
+
+        List<GymCenter> gymCenterList = new ArrayList<>();
+        gymCenterList.add(new GymCenter("1", "Gym1", "email1", "addr1", 10, 10, true));
+        gymCenterList.add(new GymCenter("2", "Gym2", "email2", "addr2", 10, 10, true));
+        gymCenterList.add(new GymCenter("3", "Gym3", "email3", "addr3", 10, 10, true));
+
+        return gymCenterList;
     }
     /**
      * Returns all GymOwners object whose requests are pending for approval.
