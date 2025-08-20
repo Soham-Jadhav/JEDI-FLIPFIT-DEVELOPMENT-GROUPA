@@ -1,8 +1,6 @@
 package com.flipfit.client;
 
 import com.flipfit.bean.GymOwner;
-import com.flipfit.business.GymOwnerBusiness;
-import com.flipfit.business.UserBusiness;
 
 import java.util.Scanner;
 
