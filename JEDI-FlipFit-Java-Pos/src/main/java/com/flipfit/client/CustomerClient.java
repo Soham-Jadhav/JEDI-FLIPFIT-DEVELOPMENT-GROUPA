@@ -1,9 +1,14 @@
 package com.flipfit.client;
 
+import com.flipfit.bean.Booking;
 import com.flipfit.bean.Customer;
+import com.flipfit.bean.GymCenter;
 import com.flipfit.business.CustomerBusiness;
 import com.flipfit.business.UserBusiness;
 
+import java.text.ParseException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Scanner;
 
 public class CustomerClient {
@@ -11,9 +16,6 @@ public class CustomerClient {
     CustomerBusiness customerBusiness = new CustomerBusiness();
     Scanner sc = new Scanner(System.in);
 
-    /**
-     * Handles the customer registration process.
-     */
     public void registerCustomer() {
         System.out.print("Enter email: ");
         customer.setEmail(sc.next());
@@ -32,52 +34,99 @@ public class CustomerClient {
         userBusiness.registerCustomer(customer);
 
         System.out.println("Customer registered successfully!");
+
     }
 
-    /**
-     * Displays available gyms to the customer.
-     * @param email The email of the customer.
-     */
-    public void viewGyms(String email) {
-        System.out.println("Displaying available gyms for " + email + "...");
+    public void viewGyms(String email) throws ParseException {
+        getGyms();
+        System.out.print("Enter gym ID: ");
+        String gymId = sc.next();
+        System.out.print("Enter Date (yyyy-mm-dd): ");
+        String dateStr = sc.next();
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+        Date date = dateFormat.parse(dateStr);
+
+        List<Slot> slots = customerBusiness.getSlotInGym(gymId);
+        boolean slotfound = false;
+        for (Slot slot : slots) {
+            System.out.print("Slot Id: " + slot.getSlotId());
+            if(!customerBusiness.isSlotBooked(slot.getSlotId(), date))slotfound = true;
+            System.out.print("Availability: " + !customerBusiness.isSlotBooked(slot.getSlotId(), date));
+        }
+        if(!slotfound){
+            System.out.println("Slot not found");
+            return;
+        }
+        System.out.print("Enter the slot ID which you want to book: ");
+        String slotId = sc.next();
+        int bookingResponse = customerBusiness.bookSlot(gymId,slotId, email, date);
+        switch (bookingResponse) {
+            case 0:
+                System.out.println("You have already booked this time. Cancelling the previous one and booking this slot");
+                break;
+            case 1:
+                System.out.println("Slot is already booked, added to the waiting list");
+                break;
+            case 2:
+                System.out.println("Successfully booked the slot");
+                break;
+            case 3:
+                System.out.println("Slot not found");
+                break;
+            default:
+                System.out.println("Booking failed");
+        }
     }
 
-    /**
-     * Fetches a list of all gyms.
-     */
     public void getGyms() {
-        System.out.println("Fetching all gyms...");
+        System.out.print("Enter your city: ");
+        List<GymCenter> gyms = customerBusiness.getGymInCity(sc.next());
+        for (GymCenter gym : gyms) {
+            System.out.print("Gym Id: " + gym.getGymId());
+            System.out.print("Gym Owner Email: " + gym.getOwnerEmail());
+            System.out.print("Gym Name: " + gym.getGymName());
+            System.out.println();
+        }
     }
 
-    /**
-     * Allows the customer to edit their profile.
-     * @param email The email of the customer whose profile is being edited.
-     */
     public void editProfile(String email) {
-        System.out.println("Editing profile for " + email + "...");
+        System.out.print("Enter password: ");
+        customer.setPassword(sc.next());
+        System.out.print("Enter Name: ");
+        customer.setName(sc.next());
+        System.out.print("Enter Phone Number: ");
+        customer.setPhoneNumber(sc.next());
+        System.out.print("Enter Age: ");
+        customer.setAge(Integer.valueOf(sc.next()));
+        System.out.print("Enter Address: ");
+        customer.setAddress(sc.next());
+        customer.setEmail(email);
+        //System.out.println("Successfully edited your profile");
+
+        UserBusiness userBusiness = new UserBusiness();
+        userBusiness.editProfile(customer);
+
+        System.out.println("Profile Updated successfully!");
     }
 
-    /**
-     * Cancels a customer's existing booking.
-     * @param email The email of the customer canceling the booking.
-     */
     public void cancelBooking(String email) {
-        System.out.println("Cancelling a booking for " + email + "...");
+        System.out.print("Enter booking ID that you want to cancel: ");
+        String bookingId = sc.next();
+        customerBusiness.cancelBooking(bookingId, email);
     }
 
-    /**
-     * Displays all of the customer's booked slots.
-     * @param email The email of the customer whose bookings are being viewed.
-     */
     public void viewBookedSlots(String email) {
-        System.out.println("Displaying booked slots for " + email + "...");
-    }
+        List<Booking> bookingslots = new ArrayList<>(customerBusiness.getBookings(email));
+        for (Booking booking : bookingslots) {
+            System.out.println("Booking Id: " + booking.getBookingId());
+            System.out.println("Slot Id: " + booking.getSlotId());
+            System.out.println("Gym Id: " + booking.getGymId());
+            System.out.println("Type: " + booking.getType());
+        }
 
-    /**
-     * Displays the customer-specific menu and handles user input.
-     * @param email The email of the currently logged-in customer.
-     */
-    public void customerMenu(String email) {
+
+    }
+    public void customerMenu(String email) throws ParseException {
         int choice = 0;
 
         while (choice != 5) {
