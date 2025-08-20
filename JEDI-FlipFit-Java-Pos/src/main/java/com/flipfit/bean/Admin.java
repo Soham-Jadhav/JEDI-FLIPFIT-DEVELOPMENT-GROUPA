@@ -4,8 +4,8 @@ public class Admin extends User{
     private String name;
     private String phoneNumber;
 
-    public Admin(String email, String password, String roleName, String name, String phoneNumber) {
-        super(email, password, roleName);
+    public Admin(String email, String password, Integer roleId, String name, String phoneNumber) {
+        super(email, password, roleId);
         this.name = name;
         this.phoneNumber = phoneNumber;
     }

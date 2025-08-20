@@ -1,13 +1,13 @@
 package com.flipfit.client;
 
 import com.flipfit.bean.GymOwner;
+import com.flipfit.business.GymOwnerBusiness;
 
 import java.util.Scanner;
 
 public class GymOwnerClient {
     GymOwner gymOwner = new GymOwner();
     GymOwnerBusiness gymOwnerBusiness = new GymOwnerBusiness();
-    UserBusiness userBusiness = new UserBusiness();
 
     /**
      * Handles the gym owner registration process.

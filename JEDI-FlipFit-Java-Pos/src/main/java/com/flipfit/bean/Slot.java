@@ -1,6 +1,7 @@
 package com.flipfit.bean;
 
-public class Slot {
+public class
+Slot {
     private String slotId;
     private String gymId;
     private String startTime;
