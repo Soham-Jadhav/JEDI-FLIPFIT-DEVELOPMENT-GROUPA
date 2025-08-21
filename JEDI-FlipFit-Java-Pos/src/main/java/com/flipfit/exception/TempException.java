@@ -1,4 +1,4 @@
-package com.flipfit.exceptions;
+package com.flipfit.exception;
 
 public class TempException {
 }
