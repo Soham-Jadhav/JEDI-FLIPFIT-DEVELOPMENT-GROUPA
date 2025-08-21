@@ -56,7 +56,7 @@ public class CustomerDAOImpl implements CustomerDAOInterface{
     public List<GymCenter> getGymInCity(String city) {
         List<GymCenter> newGym = new ArrayList<GymCenter>();
         for (GymCenter gym : gyms) {
-            if (gym.getAddress().equals(city)) {
+            if (gym.getAddress().equalsIgnoreCase(city)) {
                 newGym.add(gym);
             }
         }
@@ -65,7 +65,7 @@ public class CustomerDAOImpl implements CustomerDAOInterface{
     public List<Slot> getSlotInGym(String gymId) {
         List<Slot> slotsOfGym = new ArrayList<>();
         for (Slot s : slots) {
-            if (s.getGymId().equals(gymId)) {
+            if (s.getGymId().equalsIgnoreCase(gymId)) {
                 slotsOfGym.add(s);
             }
         }
@@ -87,7 +87,7 @@ public class CustomerDAOImpl implements CustomerDAOInterface{
         boolean flag=false;
         for(Booking booking:bookings)
         {
-            if(booking.getCustomerEmail().equals(email) && booking.getType().equals("confirmed"))
+            if(booking.getCustomerEmail().equalsIgnoreCase(email) && booking.getType().equalsIgnoreCase("confirmed"))
             {
                 flag=true;
                 tempBookings.add(booking);
