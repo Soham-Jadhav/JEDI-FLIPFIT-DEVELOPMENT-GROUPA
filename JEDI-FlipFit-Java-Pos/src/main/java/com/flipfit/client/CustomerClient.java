@@ -3,11 +3,14 @@ package com.flipfit.client;
 import com.flipfit.bean.Booking;
 import com.flipfit.bean.Customer;
 import com.flipfit.bean.GymCenter;
+import com.flipfit.bean.Slot;
 import com.flipfit.business.CustomerBusiness;
 import com.flipfit.business.UserBusiness;
 
 import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Scanner;
 
@@ -87,6 +90,8 @@ public class CustomerClient {
             System.out.print("Gym Name: " + gym.getGymName());
             System.out.println();
         }
+
+        // TODO integrate it with get gyms function.
     }
 
     public void editProfile(String email) {
@@ -123,7 +128,7 @@ public class CustomerClient {
             System.out.println("Gym Id: " + booking.getGymId());
             System.out.println("Type: " + booking.getType());
         }
-
+        // TODO : if there are no booking prompt the user
 
     }
     public void customerMenu(String email) throws ParseException {
