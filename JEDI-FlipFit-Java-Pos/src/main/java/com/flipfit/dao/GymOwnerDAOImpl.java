@@ -73,7 +73,7 @@ public class GymOwnerDAOImpl implements GymOwnerDAOInterface{
             preparedStatement.executeUpdate();
         } catch (SQLException e) {
             // print SQL exception information
-
+            e.printStackTrace();
         }
         System.out.println("Gym added successfully: " + gymDetails.getGymName());
     }
@@ -123,7 +123,7 @@ public class GymOwnerDAOImpl implements GymOwnerDAOInterface{
             preparedStatement.executeUpdate();
         } catch (SQLException e) {
             // print SQL exception information
-
+            e.printStackTrace();
         }
         System.out.println("Gym Edited successfully: " + gymDetails.getGymName());
     }
@@ -169,7 +169,7 @@ public class GymOwnerDAOImpl implements GymOwnerDAOInterface{
             // Step 3: Execute the query or update query
             preparedStatement.executeUpdate();
         } catch (SQLException e) {
-
+            e.printStackTrace();
             // print SQL exception information
         }
         System.out.println("Gym added successfully: " );
@@ -208,16 +208,16 @@ public class GymOwnerDAOImpl implements GymOwnerDAOInterface{
                 GymCenter gym = new GymCenter();
                 gym.setGymId(rs.getString("gymId"));
                 gym.setGymName(rs.getString("gymName"));
-                gym.setOwnerEmail(rs.getString("gymOwnerEmail"));
+                gym.setOwnerEmail(rs.getString("ownerEmail"));
                 gym.setAddress(rs.getString("address"));
                 gym.setSlotCount(rs.getInt("slotCount"));
-                gym.setSeatsPerSlotCount(rs.getInt("seatsPerSlot"));
+                gym.setSeatsPerSlotCount(rs.getInt("seatsPerSlotCount"));
                 gym.setVerified(rs.getBoolean("isVerified"));
                 gyms.add(gym);
                 // System.out.println(id + "," + name + "," + email + "," + country + "," + password);
             }
         } catch (SQLException e) {
-
+            e.printStackTrace();
         }
         // Step 4: try-with-resource statement will auto close the connection.
         return gyms;

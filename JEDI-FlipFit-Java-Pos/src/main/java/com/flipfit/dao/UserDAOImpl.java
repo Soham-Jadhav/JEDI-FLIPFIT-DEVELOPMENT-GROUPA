@@ -34,7 +34,7 @@ public class UserDAOImpl implements UserDAOInterface {
             }
 
         } catch (SQLException e) {
-
+            e.printStackTrace();
         }
 
         return isUserValid;
@@ -88,13 +88,13 @@ public class UserDAOImpl implements UserDAOInterface {
             PreparedStatement preparedStatementOwner = connection.prepareStatement(queryOwner);
 
             preparedStatement.setString(1, gymOwner.getEmail());
-            preparedStatement.setString(2, gymOwner.getPassword());
-            preparedStatement.setString(3, gymOwner.getRoleId());
-            preparedStatement.setString(4, gymOwner.getName());
-            preparedStatement.setString(5, gymOwner.getPhoneNumber());
-            preparedStatement.setString(6, gymOwner.getAadharNumber());
-            preparedStatement.setString(7, gymOwner.getPanNumber());
-            preparedStatement.setBoolean(8, gymOwner.isVerified());
+            preparedStatement.setString(2, gymOwner.getName());
+            preparedStatement.setString(3, gymOwner.getPhoneNumber());
+            preparedStatement.setString(4, gymOwner.getAadharNumber());
+            preparedStatement.setString(5, gymOwner.getPanNumber());
+            preparedStatement.setBoolean(6, gymOwner.isVerified());
+            preparedStatement.setString(7, gymOwner.getPassword());
+            preparedStatement.setString(8, gymOwner.getRoleId());
 
             int rowsAffected = preparedStatement.executeUpdate();
 
@@ -125,7 +125,7 @@ public class UserDAOImpl implements UserDAOInterface {
 
         // SQL to update the CustomerDetails table
         // Assuming customerEmail is the primary key/foreign key in CustomerDetails
-        String customerDetailsUpdateQuery = "UPDATE GymCustomer SET email=?, password=?, name = ?, phoneNumber = ?, age = ?, address = ? WHERE email = ?";
+        String customerDetailsUpdateQuery = "UPDATE GymCustomer SET email=?, password=?, name = ?, phoneNum = ?, age = ?, address = ? WHERE email = ?";
 
         try {
             connection = DBUtils.getConnection();

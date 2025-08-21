@@ -119,7 +119,7 @@ public class CustomerDAOImpl implements CustomerDAOInterface{
             statement.setString(2, slotId);
             statement.setString(3, gymId);
             statement.setString(4, type);
-            statement.setDate(5, (java.sql.Date)date);
+            statement.setDate(5, new java.sql.Date(date.getTime()));
             statement.setString(6, customerEmail);
             statement.executeUpdate();
             System.out.println("-----------------------------------------------");
@@ -160,19 +160,19 @@ public class CustomerDAOImpl implements CustomerDAOInterface{
         return customerBookings;
     }
 
-    public boolean cancelBooking(String slotId, String email) {
+    public boolean cancelBooking(String bookingId, String email) {
         Connection connection = null;
-        String query = "Delete from Booking where customerEmail = ? and slotId = ?";
+        String query = "Delete from Booking where customerEmail = ? and bookingId = ?";
         try {connection = DBUtils.getConnection(); PreparedStatement statement = connection.prepareStatement(query);
             statement.setString(1, email);
-            statement.setString(2, slotId);
+            statement.setString(2, bookingId);
             int rowsAffected = statement.executeUpdate(); // Get the number of rows deleted
 
             if (rowsAffected > 0) {
                 System.out.println("---------------------Successfully Canceled Booking--------------------------");
                 return true; // Booking existed and was deleted
             } else {
-                System.out.println("No booking found for customer " + email + " and slot " + slotId + ". Nothing cancelled.");
+                System.out.println("No booking found for customer " + email + " and booking id " + bookingId + ". Nothing cancelled.");
                 return false; // No booking matched the criteria
             }
             //System.out.println("---------------------Successfully Canceled Booking--------------------------");

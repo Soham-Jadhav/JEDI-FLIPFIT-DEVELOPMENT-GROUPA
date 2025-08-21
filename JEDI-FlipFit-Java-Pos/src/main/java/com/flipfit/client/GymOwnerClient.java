@@ -63,6 +63,7 @@ public class GymOwnerClient {
         gymOwner.setPanNumber(in.next());
         System.out.print("Enter Aadhaar: ");
         gymOwner.setAadharNumber(in.next());
+        gymOwner.setEmail(email);
 
         gymOwnerBusiness.editProfile(gymOwner);
     }
