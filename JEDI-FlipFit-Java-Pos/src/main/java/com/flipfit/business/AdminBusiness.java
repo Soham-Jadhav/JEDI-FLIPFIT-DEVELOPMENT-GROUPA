@@ -1,154 +1,133 @@
 package com.flipfit.business;
 import java.util.*;
+import com.flipfit.dao.AdminDAOImpl;
 import com.flipfit.bean.GymCenter;
 import com.flipfit.bean.GymOwner;
+public class AdminBusiness implements AdminBusinessInterface {
 
-ublic class AdminBusiness implements AdminBusinessInterface {
-
-    // Hardcoded data lists to replace database connections
-    private List<GymOwner> allGymOwners;
-    private List<GymCenter> allGyms;
+    // Hardcoded lists to simulate DAO functionality
+    private List<GymOwner> gymOwners = new ArrayList<>();
+    private List<GymCenter> gymCenters = new ArrayList<>();
 
     public AdminBusiness() {
-        // Initialize hardcoded data in the constructor
-        this.allGymOwners = new ArrayList<>();
-        this.allGyms = new ArrayList<>();
-        initializeData();
+        // Initialize hardcoded data
+        GymOwner verifiedGymOwner = new GymOwner("owner1@email.com", "pass123", "owner", "John Doe", "1234567890", "111122223333", "ABCDE1234F");
+        verifiedGymOwner.setVerified(true);
+        gymOwners.add(verifiedGymOwner);
+        gymOwners.add(new GymOwner("owner2@email.com", "pass456", "owner", "Jane Smith", "0987654321", "444455556666", "FGHIJ5678K"));
+
+        GymCenter verifiedGym = new GymCenter("1", "Flex Fit", "Hyderabad", "owner1@email.com", 5, 20, false);
+        verifiedGym.setVerified(true);
+        gymCenters.add(verifiedGym);
+        gymCenters.add(new GymCenter("2", "Iron Core", "Bangalore", "owner2@email.com", 10, 30, false));
     }
 
     /**
-     * Fills the in-memory lists with sample data.
-     * The new GymOwner constructor is used here.
-     * Some entries are set to 'isVerified=true' and some to 'isVerified=false'
-     * to simulate pending requests.
-     */
-    private void initializeData() {
-        // Sample Gym Owners using the new constructor
-        allGymOwners.add(new GymOwner("john.doe@example.com", "pass123", "GYM_OWNER", "John Doe", "9876543210", "111122223333", "ABCDE1234F"));
-        allGymOwners.add(new GymOwner("jane.smith@example.com", "pass456", "GYM_OWNER", "Jane Smith", "9876543211", "222233334444", "FGHIJ5678K"));
-        allGymOwners.get(0).setVerified(true); // Manually set some to verified
-        allGymOwners.get(1).setVerified(false); // Manually set some to unverified
-
-        allGymOwners.add(new GymOwner("peter.jones@example.com", "pass789", "GYM_OWNER", "Peter Jones", "9876543212", "333344445555", "LMNOP9012Q"));
-        allGymOwners.add(new GymOwner("susan.white@example.com", "pass012", "GYM_OWNER", "Susan White", "9876543213", "444455556666", "RSTUV3456W"));
-        allGymOwners.get(2).setVerified(true); // Manually set to verified
-        allGymOwners.get(3).setVerified(false); // Manually set to unverified
-
-
-        // Sample Gym Centers
-        allGyms.add(new GymCenter("G1", "Flex Fit Gym", true, "john.doe@example.com"));
-        allGyms.add(new GymCenter("G2", "Iron Beast Fitness", false, "jane.smith@example.com"));
-        allGyms.add(new GymCenter("G3", "Planet Muscle", true, "peter.jones@example.com"));
-        allGyms.add(new GymCenter("G4", "The Sweat Spot", false, "susan.white@example.com"));
-    }
-
-    /**
-     * Obtains a list of every gym owner from the hardcoded list.
+     * Obtains a list of every gym owner within the system.
      * @return List of GymOwner objects
      */
-    @Override
     public List<GymOwner> getGymOwners() {
-        System.out.println("Fetched all gym owner details from hardcoded list.");
-        // Return a copy of the list to prevent external modification
-        return new ArrayList<>(this.allGymOwners);
+        System.out.println("Fetched gym owner details successfully!");
+        return new ArrayList<>(gymOwners);
     }
 
     /**
-     * Obtains a list of every gym from the hardcoded list.
-     * @return List of GymCenter objects
+     * Obtains a list of every gym within the system.
+     * @return List of Gym objects
      */
-    @Override
     public List<GymCenter> getGym() {
-        System.out.println("Fetched all gym details from hardcoded list.");
-        // Return a copy of the list to prevent external modification
-        return new ArrayList<>(this.allGyms);
+        System.out.println("Fetched gym details successfully!");
+        return new ArrayList<>(gymCenters);
     }
 
     /**
-     * Returns all GymOwner objects whose requests are pending for verification.
-     * This is done by filtering the hardcoded list based on the isVerified field.
+     * Returns all GymOwners object whose requests are pending for approval.
      * @return List of GymOwner objects
      */
-    @Override
     public List<GymOwner> viewAllPendingGymOwnerRequests() {
-        System.out.println("Fetched pending gym owner details from hardcoded list.");
-        return this.allGymOwners.stream()
-                .filter(owner -> !owner.isVerified())
-                .collect(Collectors.toList());
+        System.out.println("Fetched pending gym owner details successfully!");
+        List<GymOwner> pendingOwners = new ArrayList<>();
+        for (GymOwner owner : gymOwners) {
+            if (!owner.isVerified()) {
+                pendingOwners.add(owner);
+            }
+        }
+        return pendingOwners;
     }
 
     /**
-     * Approves a single gym owner request by changing their isVerified status.
-     * @param gymOwnerEmail The email of the gym owner to approve
-     * @return true if the owner was found and verified, false otherwise
+     * Accepts one request from a gym owner.
+     * @param gymOwnerEmail The request's email that has to be approved
      */
-    @Override
     public boolean approveSingleGymOwnerRequest(String gymOwnerEmail) {
-        System.out.println("Approving single gym owner request: " + gymOwnerEmail);
-        for (GymOwner owner : allGymOwners) {
+        for (GymOwner owner : gymOwners) {
             if (owner.getEmail().equals(gymOwnerEmail) && !owner.isVerified()) {
                 owner.setVerified(true);
-                System.out.println("Approved gym owner request for " + gymOwnerEmail + "!");
+                System.out.println("Approved gym owner request! " + gymOwnerEmail);
                 return true;
             }
         }
-        System.out.println("Gym owner not found or already verified: " + gymOwnerEmail);
         return false;
     }
 
     /**
-     * Approves all GymOwners whose requests are pending by setting their isVerified status to true.
-     * @return always returns true
+     * Approves all GymOwners whose requests are pending for approval.
      */
-    @Override
     public boolean approveAllPendingGymOwnerRequests() {
-        System.out.println("Approving all pending gym owner requests...");
-        this.allGymOwners.forEach(owner -> owner.setVerified(true));
+        boolean approved = false;
+        for (GymOwner owner : gymOwners) {
+            if (!owner.isVerified()) {
+                owner.setVerified(true);
+                approved = true;
+            }
+        }
         System.out.println("Approved all pending gym owner requests!");
-        return true;
+        return approved;
     }
 
     /**
-     * Returns all GymCenter objects whose requests are pending for approval.
-     * This is done by filtering the hardcoded list.
-     * @return List of GymCenter objects
+     * Returns all Gym object whose requests are pending for approval.
+     * @return List of Gym objects
      */
-    @Override
     public List<GymCenter> viewAllPendingGymRequests() {
-        System.out.println("Fetched pending gym requests from hardcoded list.");
-        return this.allGyms.stream()
-                .filter(gym -> !gym.isApproved())
-                .collect(Collectors.toList());
+        System.out.println("Fetched pending gym requests successfully!");
+        List<GymCenter> pendingGyms = new ArrayList<>();
+        for (GymCenter gym : gymCenters) {
+            if (!gym.isVerified()) {
+                pendingGyms.add(gym);
+            }
+        }
+        return pendingGyms;
     }
 
     /**
-     * Approves a single GymCenter object request by changing its approval status.
+     * Approves a single Gym object request.
      * @param gymId the id of a gym that needs to be approved
-     * @return true if the gym was found and approved, false otherwise
+     * @return true if the gymId is valid else returns false
      */
-    @Override
     public boolean approveSingleGymRequest(String gymId) {
-        System.out.println("Approving single gym request: " + gymId);
-        for (GymCenter gym : allGyms) {
-            if (gym.getId().equals(gymId) && !gym.isApproved()) {
-                gym.setApproved(true);
-                System.out.println("Successfully approved gym request for " + gymId + "!");
+        for (GymCenter gym : gymCenters) {
+            if (gym.getGymId().equals(gymId) && !gym.isVerified()) {
+                gym.setVerified(true);
+                System.out.println("Successfully approved gym request! " + gymId);
                 return true;
             }
         }
-        System.out.println("Gym not found or already approved: " + gymId);
         return false;
     }
 
     /**
-     * Approves all GymCenter objects whose requests are pending by setting their approval status to true.
-     * @return always returns true
+     * Approves all Gym whose requests are pending for approval.
      */
-    @Override
     public boolean approveAllPendingGymRequests() {
-        System.out.println("Approving all pending gym requests...");
-        this.allGyms.forEach(gym -> gym.setApproved(true));
+        boolean approved = false;
+        for (GymCenter gym : gymCenters) {
+            if (!gym.isVerified()) {
+                gym.setVerified(true);
+                approved = true;
+            }
+        }
         System.out.println("Successfully approved all pending gym requests!");
-        return true;
+        return approved;
     }
 }
