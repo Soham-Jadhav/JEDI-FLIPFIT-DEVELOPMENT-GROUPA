@@ -1,4 +1,4 @@
-package com.flipfit.constant;
+package com.flipfit.constants;
 
 public class TempConstant {
 }
