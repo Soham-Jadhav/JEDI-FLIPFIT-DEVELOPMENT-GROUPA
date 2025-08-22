@@ -7,13 +7,27 @@ import com.flipfit.business.AdminBusiness;
 import java.util.List;
 import java.util.Scanner;
 
+/**
+ * @author Kriti
+ * Client-side class for the Admin user role.
+ * This class handles the user interface and interaction for administrators,
+ * providing a menu-driven system to perform actions such as viewing and
+ * approving gym and gym owner requests. It communicates with the
+ * AdminBusiness layer to execute the business logic.
+ */
 public class AdminClient {
 
+    // Instance of the business layer to access administrative functionalities.
     AdminBusiness adminBusiness = new AdminBusiness();
 
-
-
+    // Scanner object to read user input from the console.
     Scanner sc = new Scanner(System.in);
+
+    /**
+     * Displays a formatted list of all gym centers.
+     *
+     * @param gyms A list of GymCenter objects to be displayed.
+     */
     public void viewAllGyms(List<GymCenter> gyms) {
         for (GymCenter gym : gyms) {
             System.out.println("+++++++++++++++++++++++++++++++++++++++++++");
@@ -26,6 +40,12 @@ public class AdminClient {
             System.out.println("+++++++++++++++++++++++++++++++++++++++++++");
         }
     }
+
+    /**
+     * Displays a formatted list of all gym owners.
+     *
+     * @param gymOwners A list of GymOwner objects to be displayed.
+     */
     public void viewAllGymOwners(List<GymOwner> gymOwners) {
         for (GymOwner gymOwner : gymOwners) {
             System.out.println("+++++++++++++++++++++++++++++++++++++++++++");
@@ -38,31 +58,62 @@ public class AdminClient {
         }
 
     }
+
+    /**
+     * Retrieves and displays all pending gym owner registration requests.
+     * It calls the business layer to get the data and then uses the view method.
+     */
     public void viewAllPendingGymOwnerRequests() {
         viewAllGymOwners(adminBusiness.viewAllPendingGymOwnerRequests());
     }
+
+    /**
+     * Retrieves and displays all pending gym registration requests.
+     * It calls the business layer to get the data and then uses the view method.
+     */
     public void viewAllPendingGymRequests() {
         viewAllGyms(adminBusiness.viewAllPendingGymRequests());
     }
 
+    /**
+     * Prompts the user for a gym owner's email and approves that single request.
+     */
     public void approveSingleGymOwnerRequest() {
         System.out.println("Enter gym owner email: ");
         adminBusiness.approveSingleGymOwnerRequest(sc.next());
     }
 
+    /**
+     * Prompts the user for a gym ID and approves that single gym request.
+     */
     public void approveSingleGymRequest() {
         System.out.println("Enter gym Id: ");
         adminBusiness.approveSingleGymRequest(sc.next());
     }
 
+    /**
+     * Approves all pending gym owner registration requests.
+     * This method delegates the call directly to the business layer.
+     */
     public void approvePendingGymOwnerRequests() {
         adminBusiness.approveAllPendingGymOwnerRequests();
     }
 
+    /**
+     * Approves all pending gym registration requests.
+     * This method delegates the call directly to the business layer.
+     */
     public void approvePendingGymRequests() {
         adminBusiness.approveAllPendingGymRequests();
     }
-    public void adminMenu(Scanner in){
+
+    /**
+     * Displays the main menu for the administrator and handles user input.
+     * This method acts as the control flow for the admin's interaction with the system.
+     *
+     * @param in A Scanner object used to read user input.
+     */
+    public void adminMenu(Scanner in) {
         System.out.println("++++++++++++++++++++++++++++++++++++++++++++++");
         while (true) {
             System.out.println("1. View All Gym ");
@@ -106,7 +157,7 @@ public class AdminClient {
                     approveSingleGymRequest();
                     break;
                 case 9:
-                    return;
+                    return; // Exits the admin menu loop.
                 // Default case statement
                 default:
                     System.out.println("Wrong choice");

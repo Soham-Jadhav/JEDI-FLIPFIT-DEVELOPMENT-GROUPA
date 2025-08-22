@@ -9,11 +9,30 @@ import com.flipfit.utils.IdGenerator;
 
 import java.util.*;
 
+/**
+ * @author Kriti
+ * Client-side class for the Gym Owner user role.
+ * This class handles the user interface and interaction for gym owners,
+ * providing a menu-driven system to manage their profile, add and edit gyms,
+ * and add time slots. It communicates with the GymOwnerBusiness and UserBusiness
+ * layers to execute the business logic.
+ */
 public class GymOwnerClient {
+
+    // Instance of the GymOwner bean to hold user data during registration/editing.
     GymOwner gymOwner = new GymOwner();
+    // Instance of the GymOwnerBusiness layer to access gym owner-specific business logic.
     GymOwnerBusiness gymOwnerBusiness = new GymOwnerBusiness();
+    // Instance of the UserBusiness layer for user registration and profile editing.
     UserBusiness userBusiness = new UserBusiness();
 
+    /**
+     * Prompts the user for details and registers a new gym owner.
+     * The method collects all required information and then passes the GymOwner
+     * object to the UserBusiness layer for registration.
+     *
+     * @param in A Scanner object to read user input.
+     */
     public void gymOwnerRegistration(Scanner in) {
         System.out.println("\nEnter GymOwner Details: \n");
         System.out.print("Enter Email: ");
@@ -40,6 +59,12 @@ public class GymOwnerClient {
             System.out.println("\n"+"Gym Owner registration failed! Try again!");
     }
 
+    /**
+     * Fetches and displays the profile information of the logged-in gym owner.
+     *
+     * @param in    A Scanner object (unused in this method but kept for consistency).
+     * @param email The email of the logged-in gym owner.
+     */
     public void viewProfile(Scanner in, String email) {
         gymOwner = gymOwnerBusiness.getProfile(email);
         System.out.println("______________________________________________________________");
@@ -50,6 +75,13 @@ public class GymOwnerClient {
         System.out.println("\n______________________________________________________________");
     }
 
+    /**
+     * Allows a gym owner to edit their profile details.
+     * It collects new information and sends it to the GymOwnerBusiness layer for update.
+     *
+     * @param in    A Scanner object to read user input.
+     * @param email The email of the gym owner whose profile is to be edited.
+     */
     public void editProfile(Scanner in, String email) {
         System.out.println("Enter Details: ");
         System.out.print("Enter Password: ");
@@ -68,6 +100,12 @@ public class GymOwnerClient {
         gymOwnerBusiness.editProfile(gymOwner);
     }
 
+    /**
+     * Prompts the user for gym details and adds a new gym center.
+     *
+     * @param in    A Scanner object to read user input.
+     * @param email The email of the logged-in gym owner, which is set as the owner's email for the new gym.
+     */
     public void addGym(Scanner in, String email) {
         System.out.println("Please Enter Gym Details ");
 
@@ -82,11 +120,18 @@ public class GymOwnerClient {
         gym.setSlotCount(in.nextInt());
         System.out.print("SeatsPerSlotCount: ");
         gym.setSeatsPerSlotCount(in.nextInt());
+        // A newly added gym is not verified by default.
         gym.setVerified(false);
 
         gymOwnerBusiness.addGym(gym);
     }
 
+    /**
+     * Prompts the user for gym details and edits an existing gym center.
+     *
+     * @param in    A Scanner object to read user input.
+     * @param email The email of the logged-in gym owner.
+     */
     public void editGym(Scanner in, String email) {
         System.out.println("Please Enter Gym Details ");
 
@@ -102,11 +147,17 @@ public class GymOwnerClient {
         gym.setSlotCount(in.nextInt());
         System.out.print("SeatsPerSlotCount: ");
         gym.setSeatsPerSlotCount(in.nextInt());
+        // A gym that is edited will need to be re-verified by an admin.
         gym.setVerified(false);
 
         gymOwnerBusiness.editGym(gym);
     }
 
+    /**
+     * Prompts the user for slot details and adds a new time slot to a gym.
+     *
+     * @param in A Scanner object to read user input.
+     */
     public void addSlot(Scanner in) {
         System.out.println("Enter Slot Details: ");
         Slot slot = new Slot();
@@ -121,11 +172,18 @@ public class GymOwnerClient {
         slot.setNumOfSeats(in.nextInt());
         System.out.print("Enter Trainer: ");
         slot.setTrainer(in.next());
+        // A new slot has no seats booked initially.
         slot.setNumOfSeatsBooked(0);
 
         gymOwnerBusiness.addSlot(slot);
     }
 
+    /**
+     * Retrieves and displays the details of all gyms associated with the logged-in gym owner.
+     *
+     * @param in    A Scanner object (unused but kept for consistency).
+     * @param email The email of the gym owner.
+     */
     public void getGymDetails(Scanner in, String email) {
         List<GymCenter> gymDetails = gymOwnerBusiness.getGymDetail(email);
         for (GymCenter gym : gymDetails) {
@@ -133,6 +191,13 @@ public class GymOwnerClient {
         }
     }
 
+    /**
+     * Displays the main menu for the gym owner and handles their choices.
+     * This method acts as the control flow for the gym owner's interaction with the system.
+     *
+     * @param in    A Scanner object to read user input.
+     * @param email The email of the logged-in gym owner.
+     */
     public void gymOwnerMenu(Scanner in, String email) {
         boolean recur = true;
         while (recur) {
@@ -177,6 +242,5 @@ public class GymOwnerClient {
                     System.out.println("Invalid Choice!");
             }
         }
-
     }
 }

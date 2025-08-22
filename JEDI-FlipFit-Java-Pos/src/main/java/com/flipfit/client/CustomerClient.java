@@ -14,11 +14,28 @@ import java.util.Date;
 import java.util.List;
 import java.util.Scanner;
 
+/**
+ * @author Kriti
+ * Client-side class for the Customer user role.
+ * This class handles the user interface and interaction for customers,
+ * providing a menu-driven system to perform actions such as registering,
+ * viewing and booking gym slots, and managing their profile. It communicates
+ * with the CustomerBusiness and UserBusiness layers to execute the logic.
+ */
 public class CustomerClient {
+
+    // Instance of the Customer bean to hold user data during registration/editing.
     Customer customer = new Customer();
+    // Instance of the CustomerBusiness layer to access customer-specific business logic.
     CustomerBusiness customerBusiness = new CustomerBusiness();
+    // Scanner object to read user input from the console.
     Scanner sc = new Scanner(System.in);
 
+    /**
+     * Prompts the user for details and registers a new customer.
+     * The method collects all required information and then passes the Customer
+     * object to the UserBusiness layer for registration.
+     */
     public void registerCustomer() {
         System.out.print("Enter email: ");
         customer.setEmail(sc.next());
@@ -33,22 +50,33 @@ public class CustomerClient {
         System.out.print("Enter Address: ");
         customer.setAddress(sc.next());
         customer.setRoleId("Customer");
+
         UserBusiness userBusiness = new UserBusiness();
         userBusiness.registerCustomer(customer);
 
         System.out.println("Customer registered successfully!");
-
     }
 
+    /**
+     * Guides the user through the process of viewing gyms and booking a slot.
+     * It first prompts for a city to find gyms, then a gym ID and a date to find
+     * available slots, and finally allows the user to book a slot.
+     *
+     * @param email The email of the logged-in customer.
+     * @exception ParseException if the date format is incorrect.
+     */
     public void viewGyms(String email) throws ParseException {
         getGyms();
         System.out.print("Enter gym ID: ");
         String gymId = sc.next();
         System.out.print("Enter Date (yyyy-mm-dd): ");
         String dateStr = sc.next();
+
+        // SimpleDateFormat is used to parse the date string into a Date object.
         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
         Date date = dateFormat.parse(dateStr);
 
+        // Retrieve and display available slots for the selected gym and date.
         List<Slot> slots = customerBusiness.getSlotInGym(gymId);
         boolean slotfound = false;
         for (Slot slot : slots) {
@@ -56,12 +84,16 @@ public class CustomerClient {
             if(!customerBusiness.isSlotBooked(slot.getSlotId(), date))slotfound = true;
             System.out.print("Availability: " + !customerBusiness.isSlotBooked(slot.getSlotId(), date));
         }
+
         if(!slotfound){
             System.out.println("Slot not found");
             return;
         }
+
         System.out.print("Enter the slot ID which you want to book: ");
         String slotId = sc.next();
+
+        // Book the selected slot and provide feedback based on the business layer's response.
         int bookingResponse = customerBusiness.bookSlot(gymId,slotId, email, date);
         switch (bookingResponse) {
             case 0:
@@ -81,6 +113,9 @@ public class CustomerClient {
         }
     }
 
+    /**
+     * Prompts the user for a city and displays the list of gyms in that city.
+     */
     public void getGyms() {
         System.out.print("Enter your city: ");
         List<GymCenter> gyms = customerBusiness.getGymInCity(sc.next());
@@ -94,6 +129,12 @@ public class CustomerClient {
         // TODO integrate it with get gyms function.
     }
 
+    /**
+     * Allows a customer to edit their profile details.
+     * It collects new information and sends it to the UserBusiness layer for update.
+     *
+     * @param email The email of the customer whose profile is to be edited.
+     */
     public void editProfile(String email) {
         System.out.print("Enter password: ");
         customer.setPassword(sc.next());
@@ -106,7 +147,6 @@ public class CustomerClient {
         System.out.print("Enter Address: ");
         customer.setAddress(sc.next());
         customer.setEmail(email);
-        //System.out.println("Successfully edited your profile");
 
         UserBusiness userBusiness = new UserBusiness();
         userBusiness.editProfile(customer);
@@ -114,12 +154,22 @@ public class CustomerClient {
         System.out.println("Profile Updated successfully!");
     }
 
+    /**
+     * Prompts the user for a booking ID and cancels the corresponding booking.
+     *
+     * @param email The email of the customer who wants to cancel the booking.
+     */
     public void cancelBooking(String email) {
         System.out.print("Enter booking ID that you want to cancel: ");
         String bookingId = sc.next();
         customerBusiness.cancelBooking(bookingId, email);
     }
 
+    /**
+     * Retrieves and displays all bookings made by the logged-in customer.
+     *
+     * @param email The email of the customer.
+     */
     public void viewBookedSlots(String email) {
         List<Booking> bookingslots = new ArrayList<>(customerBusiness.getBookings(email));
         for (Booking booking : bookingslots) {
@@ -131,6 +181,14 @@ public class CustomerClient {
         // TODO : if there are no booking prompt the user
 
     }
+
+    /**
+     * Displays the main menu for the customer and handles their choices.
+     * This method acts as the control flow for the customer's interaction with the system.
+     *
+     * @param email The email of the logged-in customer.
+     * @exception ParseException if date parsing fails in `viewGyms`.
+     */
     public void customerMenu(String email) throws ParseException {
         int choice = 0;
 
