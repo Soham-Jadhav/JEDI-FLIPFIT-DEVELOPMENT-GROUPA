@@ -110,20 +110,20 @@ public class CustomerDAOImpl implements CustomerDAOInterface{
      */
     public boolean isSlotBooked(String slotId, Date date) {
         Connection connection = null;
-        // This query seems to have a logical error. It should check if numOfSeatsBooked >= numOfSeats.
-        // The original query "isVerified from Booking" doesn't make sense here.
-        // Assuming the intent is to check for full slots based on seats.
-        String query = "select * from Slot where slotId = ? and numOfSeats <= numOfSeatsBooked";
-        try {
-            connection = DBUtils.getConnection();
+        String query = "select slotId from Slot where slotId=? and  numOfSeats <= numOfSeatsBooked ";
+        try {connection = DBUtils.getConnection();
+
             PreparedStatement preparedStatement = connection.prepareStatement(query);
             preparedStatement.setString(1, slotId);
+            //System.out.println(preparedStatement);
+
             ResultSet rs = preparedStatement.executeQuery();
 
-            return rs.next(); // Returns true if a row is found (slot is full), false otherwise.
+            return rs.next();
         } catch (SQLException e) {
             printSQLException(e);
         }
+
         return false;
     }
 
@@ -139,34 +139,40 @@ public class CustomerDAOImpl implements CustomerDAOInterface{
      */
     public int bookSlot(String gymId, String slotId, String customerEmail,  Date date) {
         Connection connection = null;
-
-        // Determine if the booking should be confirmed or waitlisted.
+        // Generate bookingId
         String type = "confirmed";
-        int flag = 2;
+        int flag=0;
+        String bookingId = IdGenerator.generateId("Booking");
         if(isSlotBooked(slotId, date)) {
             type = "Waiting";
             flag = 1;
         }
 
-        // Generate a unique booking ID.
-        String bookingId = IdGenerator.generateId("Booking");
-
-        String query = "INSERT INTO Booking (bookingId, slotId, gymId, type, date, customerEmail) values(?, ?, ?, ?, ?, ?)";
+        String query = "INSERT INTO Booking (bookingId,slotId,gymId,type,date,customerEmail) values(?, ?, ?, ?, ?, ?)";
+        String updateSlotQuery = "UPDATE Slot SET numOfSeatsBooked = numOfSeatsBooked + 1 WHERE slotId = ?";
         try {
             connection = DBUtils.getConnection();
+
+            // Insert new booking
             PreparedStatement statement = connection.prepareStatement(query);
             statement.setString(1, bookingId);
             statement.setString(2, slotId);
             statement.setString(3, gymId);
             statement.setString(4, type);
-            // Convert java.util.Date to java.sql.Date for the database.
             statement.setDate(5, new java.sql.Date(date.getTime()));
             statement.setString(6, customerEmail);
             statement.executeUpdate();
+
+            // Check if the booking is confirmed before updating the slot
+            if (flag == 0) {
+                PreparedStatement updateStatement = connection.prepareStatement(updateSlotQuery);
+                updateStatement.setString(1, slotId);
+                updateStatement.executeUpdate();
+            }
+
             System.out.println("-----------------------------------------------");
         } catch (SQLException sqlExcep) {
             printSQLException(sqlExcep);
-            return -1; // Indicate a failure
         }
         return flag;
     }
@@ -216,26 +222,107 @@ public class CustomerDAOImpl implements CustomerDAOInterface{
      */
     public boolean cancelBooking(String bookingId, String email) {
         Connection connection = null;
-        String query = "Delete from Booking where customerEmail = ? and bookingId = ?";
+        PreparedStatement statement = null;
+        String slotId = null;
+        boolean bookingDeleted = false; // Initialize flag
+
         try {
             connection = DBUtils.getConnection();
-            PreparedStatement statement = connection.prepareStatement(query);
+            connection.setAutoCommit(false); // Start transaction
+
+            // Step 1: Fetch the slotId from the booking before deleting
+            String fetchSlotIdQuery = "SELECT slotId FROM Booking WHERE customerEmail = ? AND bookingId = ?";
+            statement = connection.prepareStatement(fetchSlotIdQuery);
             statement.setString(1, email);
             statement.setString(2, bookingId);
+            ResultSet rs = statement.executeQuery();
 
-            // Execute the delete statement and check the number of rows affected.
-            int rowsAffected = statement.executeUpdate();
-
-            if (rowsAffected > 0) {
-                System.out.println("---------------------Successfully Canceled Booking--------------------------");
-                return true; // Booking existed and was deleted
+            if (rs.next()) {
+                slotId = rs.getString("slotId");
             } else {
                 System.out.println("No booking found for customer " + email + " and booking id " + bookingId + ". Nothing cancelled.");
                 return false; // No booking matched the criteria
             }
+
+            // Step 2: Delete the booking
+            String deleteBookingQuery = "DELETE FROM Booking WHERE customerEmail = ? AND bookingId = ?";
+            statement = connection.prepareStatement(deleteBookingQuery);
+            statement.setString(1, email);
+            statement.setString(2, bookingId);
+            int rowsAffected = statement.executeUpdate();
+
+            if (rowsAffected > 0) {
+                bookingDeleted = true; // Set flag to true if deletion was successful
+            }
+
+            // Step 3: Check the flag and decrement numOfSeatsBooked
+            if (bookingDeleted) {
+                String updateSlotQuery = "UPDATE Slot SET numOfSeatsBooked = numOfSeatsBooked - 1 WHERE slotId = ?";
+                PreparedStatement updateStatement = connection.prepareStatement(updateSlotQuery);
+                updateStatement.setString(1, slotId);
+                updateStatement.executeUpdate();
+
+                // Step 4: Fetch the total seats and booked seats after the decrement
+                String fetchSlotDetailsQuery = "SELECT numOfSeats, numOfSeatsBooked FROM Slot WHERE slotId = ?";
+                PreparedStatement fetchSlotDetailsStatement = connection.prepareStatement(fetchSlotDetailsQuery);
+                fetchSlotDetailsStatement.setString(1, slotId);
+                ResultSet slotDetailsRs = fetchSlotDetailsStatement.executeQuery();
+
+                if (slotDetailsRs.next()) {
+                    int numOfSeats = slotDetailsRs.getInt("numOfSeats");
+                    int numOfSeatsBooked = slotDetailsRs.getInt("numOfSeatsBooked");
+                    int availableSeats = numOfSeats - numOfSeatsBooked;
+
+                    if (availableSeats > 0) {
+                        // Step 5: Update the 'Waiting' bookings to 'confirmed' based on available seats
+                        String updateWaitlistQuery = "UPDATE Booking SET type = 'confirmed' WHERE slotId = ? AND type = 'Waiting' ORDER BY date ASC LIMIT ?";
+                        PreparedStatement updateWaitlistStatement = connection.prepareStatement(updateWaitlistQuery);
+                        updateWaitlistStatement.setString(1, slotId);
+                        updateWaitlistStatement.setInt(2, availableSeats);
+                        int confirmedBookingsCount = updateWaitlistStatement.executeUpdate();
+
+                        // Step 6: Update numOfSeatsBooked by adding the number of confirmed bookings
+                        if (confirmedBookingsCount > 0) {
+                            String finalUpdateSlotQuery = "UPDATE Slot SET numOfSeatsBooked = numOfSeatsBooked + ? WHERE slotId = ?";
+                            PreparedStatement finalUpdateStatement = connection.prepareStatement(finalUpdateSlotQuery);
+                            finalUpdateStatement.setInt(1, confirmedBookingsCount);
+                            finalUpdateStatement.setString(2, slotId);
+                            finalUpdateStatement.executeUpdate();
+                            System.out.println(confirmedBookingsCount + " waitlisted bookings have been confirmed.");
+                        }
+                    }
+                }
+
+                connection.commit(); // Commit the transaction
+                System.out.println("---------------------Successfully Canceled Booking--------------------------");
+                return true;
+            } else {
+                connection.rollback(); // Rollback if delete failed
+                return false;
+            }
+
         } catch (SQLException sqlExcep) {
+            try {
+                if (connection != null) {
+                    connection.rollback(); // Rollback on exception
+                }
+            } catch (SQLException e) {
+                printSQLException(e);
+            }
             printSQLException(sqlExcep);
             return  false;
+        } finally {
+            try {
+                if (statement != null) {
+                    statement.close();
+                }
+                if (connection != null) {
+                    connection.setAutoCommit(true);
+                    connection.close();
+                }
+            } catch (SQLException e) {
+                printSQLException(e);
+            }
         }
     }
 
