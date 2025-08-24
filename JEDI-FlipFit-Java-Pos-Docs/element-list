@@ -1,0 +1,10 @@
+unnamed package
+com.flipfit.bean
+com.flipfit.business
+com.flipfit.client
+com.flipfit.constants
+com.flipfit.dao
+com.flipfit.exception
+com.flipfit.helper
+com.flipfit.utils
+com.flipfit.validator
